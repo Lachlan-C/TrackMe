@@ -1,3 +1,4 @@
+$('#navbar').load('navbar.html'); 
 const devices = JSON.parse(localStorage.getItem('devices')) || [];
 
 devices.push({
@@ -29,10 +30,12 @@ $('#add-device').on('click', function () {
         name
     });
     localStorage.setItem('devices', JSON.stringify(devices));
-    location.href = 'device-list.html';
+    location.href = '/';
 });
 
 $('#send-command').on('click', function () {
     const command = $('#command').val();
     console.log(`command is: ${command}`);
 });
+
+$('#footer').load('footer.html'); 
