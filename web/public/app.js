@@ -1,5 +1,6 @@
-$('#navbar').load('navbar.html'); 
+$('#navbar').load('navbar.html');
 const devices = JSON.parse(localStorage.getItem('devices')) || [];
+const users = JSON.parse(localStorage.getItem('users')) || [];
 
 devices.push({
     user: "Mary",
@@ -38,4 +39,43 @@ $('#send-command').on('click', function () {
     console.log(`command is: ${command}`);
 });
 
-$('#footer').load('footer.html'); 
+$('#register').on('click', function () {
+    const username = $('#user').val();
+    const password = $('#password').val();
+    const confirm = $('#confirm').val();
+    const exists = users.find(user => user.name === username);
+    if (exists == undefined) {
+        if (password == confirm) {
+            users.push({
+                name: username,
+                password: password
+            });
+            localStorage.setItem('users', JSON.stringify(users));
+            location.href = '/login';
+        } else {
+            $('label[for=message]').text("Password doesn't match correct");
+        }
+
+    } else {
+        $('label[for=message]').text("Name already in use please choose another one");
+    }
+});
+
+$('#login').on('click', function () {
+    const username = $('#username').val();
+    const passwordcheck = $('#password').val();
+    if(users.find(user => user.name === username && user.password === passwordcheck)){
+        localStorage.setItem("isAuthenticated", "true");
+        location.href = '/';
+    } else {
+        $('label[for=message]').text("Error");
+    }
+});
+
+const logout = () => {
+    localStorage.removeItem('isAuthenticated');
+    location.href = '/login';
+}
+
+
+$('#footer').load('footer.html');
