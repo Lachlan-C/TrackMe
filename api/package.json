@@ -5,6 +5,8 @@
   "main": "api.js",
   "dependencies": {
     "-": "^0.0.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "g": "^2.0.1",
     "mongoose": "^5.9.25",
@@ -15,7 +17,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon api.js"
+    "start": "nodemon -r dotenv/config api.js"
   },
   "author": "",
   "license": "ISC"
