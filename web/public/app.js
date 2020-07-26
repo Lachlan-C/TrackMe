@@ -1,6 +1,19 @@
 $('#navbar').load('navbar.html');
-const devices = JSON.parse(localStorage.getItem('devices')) || [];
+$.get('http://localhost:3001/devices').then(response => {
+    response.forEach(device => {
+        $('#devices tbody').append(`
+            <tr>       
+                <td>${device.user}</td> 
+                <td>${device.name}</td>
+            </tr>`);
+    });
+}).catch(error => {
+    console.error(`Error: ${error}`);
+});
+console.log(response);
+const devices = JSON.parse(response);
 const users = JSON.parse(localStorage.getItem('users')) || [];
+
 
 devices.push({
     user: "Mary",
@@ -15,6 +28,8 @@ devices.push({
     name: "Mary's MacBook"
 });
 
+
+
 devices.forEach(function (device) {
     $('#devices tbody').append(`
         <tr>
@@ -23,15 +38,20 @@ devices.forEach(function (device) {
         </tr>`);
 });
 
-$('#add-device').on('click', function () {
-    const user = $('#user').val();
+$('#add-device').on('click', () => {
     const name = $('#name').val();
-    devices.push({
+    const user = $('#user').val();
+    const sensorData = [];
+    const body = {
+        name,
         user,
-        name
+        sensorData
+    };
+    $.post('http://localhost:3001/devices', body).then(response => {
+        location.href = '/';
+    }).catch(error => {
+        console.error(`Error: ${error}`);
     });
-    localStorage.setItem('devices', JSON.stringify(devices));
-    location.href = '/';
 });
 
 $('#send-command').on('click', function () {
@@ -64,7 +84,7 @@ $('#register').on('click', function () {
 $('#login').on('click', function () {
     const username = $('#username').val();
     const passwordcheck = $('#password').val();
-    if(users.find(user => user.name === username && user.password === passwordcheck)){
+    if (users.find(user => user.name === username && user.password === passwordcheck)) {
         localStorage.setItem("isAuthenticated", "true");
         location.href = '/';
     } else {
