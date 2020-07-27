@@ -2,7 +2,7 @@ $('#navbar').load('navbar.html');
 const API_URL = 'http://localhost:5000/api';
 
 const users = JSON.parse(localStorage.getItem('users')) || [];
-$.get('${API_URL}/devices').then(response => {
+$.get(`${API_URL}/devices`).then(response => {
     response.forEach(device => {
         $('#devices tbody').append(`
             <tr>       
@@ -13,9 +13,8 @@ $.get('${API_URL}/devices').then(response => {
 }).catch(error => {
     console.error(`Error: ${error}`);
 });
-const devices = JSON.parse(response);
 
-devices.push({
+/* devices.push({
     user: "Mary",
     name: "Mary's iPhone"
 });
@@ -27,16 +26,8 @@ devices.push({
     user: "Mary",
     name: "Mary's MacBook"
 });
+ */
 
-
-
-devices.forEach(function (device) {
-    $('#devices tbody').append(`
-        <tr>
-            <td>${device.user}</td>
-            <td>${device.name}</td>    
-        </tr>`);
-});
 
 $('#add-device').on('click', () => {
     const name = $('#name').val();

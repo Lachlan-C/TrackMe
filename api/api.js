@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 const port = process.env.PORT || 5000;
 const Device = require('./models/devices');
+
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -22,7 +23,7 @@ app.get('/api/test', (req, res) => {
 });
 app.get('/api/devices', (req, res) => {
     Device.find({}, (err, devices) => {
-        return err ? res.send(err) : res.send(devices);
+        return res.send(devices);
     });
 });
 app.post('/api/devices', (req, res) => {
