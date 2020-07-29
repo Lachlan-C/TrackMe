@@ -13,11 +13,13 @@
     "npm": "^6.14.7"
   },
   "devDependencies": {
+    "apidoc": "^0.24.0",
     "nodemon": "^2.0.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -r dotenv/config api.js"
+    "start": "nodemon -r dotenv/config api.js",
+    "doc": "apidoc -o public/generated-docs/ -e node_modules/"
   },
   "author": "",
   "license": "ISC"

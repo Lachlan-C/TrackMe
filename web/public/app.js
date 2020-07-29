@@ -1,7 +1,46 @@
 $('#navbar').load('navbar.html');
 const API_URL = 'http://localhost:5000/api';
 
-const users = JSON.parse(localStorage.getItem('users')) || [];
+const currentUser = localStorage.getItem('user');
+if (currentUser) {
+    $.get(`${API_URL}/users/${currentUser}/devices`).then(response => {
+        response.forEach((device) => {
+            $('#devices tbody').append(`
+                <tr data-device-id=${device._id}>
+                <td>${device.user}</td>
+                <td>${device.name}</td>        
+            </tr>`);
+        });
+        $('#devices tbody tr').on('click', (e) => {
+            const deviceId = e.currentTarget.getAttribute('data-device-id');
+            $.get(`${API_URL}/devices/${deviceId}/device-history`).then(response => {
+                response.map(sensorData => {
+                    $('#historyContent').append(`    
+                        <tr>      
+                            <td>${sensorData.ts}</td>
+                            <td>${sensorData.temp}</td>
+                            <td>${sensorData.loc.lat}</td>
+                            <td>${sensorData.loc.lon}</td>
+                        </tr>  
+                    `);
+                });
+                $('#historyModal').modal('show');
+            });
+        });
+
+    }).catch(error => {
+        console.error(`Error: ${error}`);
+    });
+} else {
+    const path = window.location.pathname;
+    if (path !== '/login' && path !== '/registration') {
+        location.href = '/login';
+    }
+}
+
+
+
+/* const users = JSON.parse(localStorage.getItem('users')) || [];
 $.get(`${API_URL}/devices`).then(response => {
     response.forEach(device => {
         $('#devices tbody').append(`
@@ -9,10 +48,10 @@ $.get(`${API_URL}/devices`).then(response => {
                 <td>${device.user}</td> 
                 <td>${device.name}</td>
             </tr>`);
+    }).catch(error => {
+        console.error(`Error: ${error}`);
     });
-}).catch(error => {
-    console.error(`Error: ${error}`);
-});
+}); */
 
 /* devices.push({
     user: "Mary",
@@ -54,39 +93,54 @@ $('#register').on('click', function () {
     const username = $('#user').val();
     const password = $('#password').val();
     const confirm = $('#confirm').val();
-    const exists = users.find(user => user.name === username);
-    if (exists == undefined) {
-        if (password == confirm) {
-            users.push({
-                name: username,
-                password: password
-            });
-            localStorage.setItem('users', JSON.stringify(users));
+    if (password === confirm) {
+        const body = {
+            username,
+            password
+        };
+        $.post(`${API_URL}/registration`, body).then(response => {
             location.href = '/login';
-        } else {
-            $('label[for=message]').text("Password doesn't match correct");
-        }
+        }).catch(error => {
+            $('label[for=message]').text(error);
+        });
 
     } else {
-        $('label[for=message]').text("Name already in use please choose another one");
+        $('label[for=message]').text("Password doesn't match correct");
     }
+
+
+
+
+
+
 });
 
-$('#login').on('click', function () {
-    const username = $('#username').val();
-    const passwordcheck = $('#password').val();
-    if (users.find(user => user.name === username && user.password === passwordcheck)) {
-        localStorage.setItem("isAuthenticated", "true");
-        location.href = '/';
-    } else {
-        $('label[for=message]').text("Error");
-    }
+$('#login').on('click', () => {
+    const user = $('#user').val();
+    const password = $('#password').val();
+    $.post(`${API_URL}/authenticate`, {
+        user,
+        password
+    }).then((response) => {
+        if (response.success) {
+            localStorage.setItem('user', user);
+            localStorage.setItem('isAdmin', response.isAdmin);
+            localStorage.setItem('isAuthenticated', true);
+            location.href = '/';
+        } else {
+            $('#message').append(`<p class="alert alert-danger">${response}</p>`);
+        }
+    });
 });
 
 const logout = () => {
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isAdmin')
     location.href = '/login';
 }
+
+
 
 
 $('#footer').load('footer.html');
