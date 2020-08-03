@@ -1,5 +1,5 @@
 $('#navbar').load('navbar.html');
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://api-azure.vercel.app/api';
 
 const currentUser = localStorage.getItem('user');
 if (currentUser) {

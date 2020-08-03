@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect("mongodb+srv://dbUser:mF9XWR5QVePTiJWX@trackme-backend.syktl.mongodb.net", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
