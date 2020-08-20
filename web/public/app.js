@@ -1,5 +1,13 @@
 $('#navbar').load('navbar.html');
 const API_URL = 'https://api-azure.vercel.app/api';
+const MQTT_URL = 'http://localhost:5001/send-command';
+
+/* $.use(express.static('public'));
+$.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+}); */
 
 const currentUser = localStorage.getItem('user');
 if (currentUser) {
@@ -77,7 +85,7 @@ $('#add-device').on('click', () => {
         user,
         sensorData
     };
-    $.post('${API_URL}/devices', body).then(response => {
+    $.post(`${API_URL}/devices`, body).then(response => {
         location.href = '/';
     }).catch(error => {
         console.error(`Error: ${error}`);
@@ -86,7 +94,17 @@ $('#add-device').on('click', () => {
 
 $('#send-command').on('click', function () {
     const command = $('#command').val();
+    const deviceID = $('#deviceID').val();
     console.log(`command is: ${command}`);
+    const body = {
+        deviceID,
+        command
+    };
+    $.post(`${MQTT_URL}`, body).then(response => {
+        console.log(response)
+    }).catch(error => {
+        console.error(`Error: ${error}`);
+    });
 });
 
 $('#register').on('click', function () {
@@ -107,12 +125,6 @@ $('#register').on('click', function () {
     } else {
         $('label[for=message]').text("Password doesn't match correct");
     }
-
-
-
-
-
-
 });
 
 $('#login').on('click', () => {
@@ -139,8 +151,5 @@ const logout = () => {
     localStorage.removeItem('isAdmin')
     location.href = '/login';
 }
-
-
-
 
 $('#footer').load('footer.html');
